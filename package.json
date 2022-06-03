@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "google-auth-library": "^8.0.2",
+    "googleapis": "^39.2.0"
+  },
+  "devDependencies": {
+    "ts-node": "^10.8.0",
+    "typescript": "^4.7.2"
+  }
+}
