@@ -126,6 +126,6 @@ const start = async (auth: string | OAuth2Client) =>  {
   const {filename} = await saveBankFile(auth);
   fs.readFile(`output/${filename}`, (err,data) => {
   const parsedEntries = getDataFromHtml(data.toString(),filename)
-  // addEntriesToNotionDatabase(parsedEntries);
+  addEntriesToNotionDatabase(parsedEntries);
   })
 }
