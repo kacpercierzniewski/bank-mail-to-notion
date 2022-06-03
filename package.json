@@ -2,7 +2,8 @@
   "dependencies": {
     "gaxios": "^5.0.0",
     "google-auth-library": "^8.0.2",
-    "googleapis": "^39.2.0"
+    "googleapis": "^39.2.0",
+    "node-html-parser": "^5.3.3"
   },
   "scripts": {
     "start": "ts-node index.ts",

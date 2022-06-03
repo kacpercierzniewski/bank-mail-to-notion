@@ -5,6 +5,7 @@ import {google, gmail_v1} from 'googleapis'
 import { OAuth2Client } from 'google-auth-library';
 import { GaxiosResponse } from 'gaxios';
 import { BANK_MAIL } from './consts';
+import { getDataFromHtml } from './getDataFromHtml';
 
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'];
@@ -99,7 +100,7 @@ const getAttachment = async (gmailService: gmail_v1.Gmail, messageId: string, id
   })
 }
 
-const start = async (auth: string | OAuth2Client) =>  {
+const saveBankFile = async (auth: string | OAuth2Client) => {
     //@ts-ignore
   const gmailService = google.gmail({ version: "v1",auth: auth});
   const bankMessages = await getLastMessagesFromGivenSender(gmailService, BANK_MAIL)
@@ -113,6 +114,16 @@ const start = async (auth: string | OAuth2Client) =>  {
     console.log(`file ${filename} created!`)
     }
   );
-  
 
+  return {filename};
+}
+
+const FILENAME = 'Powiadomienie e-mail z 2022-06-02.htm'
+const start = async (auth: string | OAuth2Client) =>  {
+  // const {filename} = await saveBankFile(auth);
+  // console.log(filename); //Powiadomienie e-mail z 2022-06-02.htm
+  const filename = FILENAME;
+  fs.readFile(`output/${filename}`, (err,data) => {
+  getDataFromHtml(data.toString())
+  })
 }
