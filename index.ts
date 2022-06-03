@@ -65,13 +65,16 @@ function getNewToken(oAuth2Client: OAuth2Client, callback: (auth: OAuth2Client |
 }
 
 
-const getLastMessagesFromGivenSender = async (gmailService: gmail_v1.Gmail, sender: string) => {
-  const date = new Date();
-  date.setDate(date.getDate() - 1); // get previous day
-  console.log(date)
+const getLastMessagesFromGivenSender = async (gmailService: gmail_v1.Gmail, sender: string, preferedDate?: string) => {
+  const beforeDate = preferedDate ? new Date(preferedDate)  : new Date();
+  const afterDate = preferedDate ? new Date(preferedDate)  : new Date();
+  afterDate.setDate(preferedDate ? afterDate.getDate() + 1 : afterDate.getDate() - 1);
+  beforeDate.setDate(preferedDate ? beforeDate.getDate() + 2 : beforeDate.getDate());
+  console.log(afterDate)
+  console.log(beforeDate)
     return gmailService.users.messages.list({
   userId: 'me',
-  q: `from:${sender} has:attachment filename:htm after:${date.toLocaleDateString()}`,
+  q: `from:${sender} has:attachment filename:htm after:${afterDate.toLocaleDateString()} before:${beforeDate.toLocaleDateString()}`,
 })
 
 }
@@ -105,7 +108,9 @@ const getAttachment = async (gmailService: gmail_v1.Gmail, messageId: string, id
 const saveBankFile = async (auth: string | OAuth2Client) => {
     //@ts-ignore
   const gmailService = google.gmail({ version: "v1",auth: auth});
-  const bankMessages = await getLastMessagesFromGivenSender(gmailService, BANK_MAIL)
+  const yesterday = new Date()
+  yesterday.setDate(yesterday.getDate() -1);
+  const bankMessages = await getLastMessagesFromGivenSender(gmailService, BANK_MAIL, yesterday.toDateString())
   const latestMessages = bankMessages.data.messages;
   const lastMessage = getLastMessage(latestMessages);
   const lastMessageDetails = await getMessageDetails(gmailService, lastMessage); 
@@ -121,6 +126,6 @@ const start = async (auth: string | OAuth2Client) =>  {
   const {filename} = await saveBankFile(auth);
   fs.readFile(`output/${filename}`, (err,data) => {
   const parsedEntries = getDataFromHtml(data.toString(),filename)
-  addEntriesToNotionDatabase(parsedEntries);
+  // addEntriesToNotionDatabase(parsedEntries);
   })
 }
