@@ -6,6 +6,8 @@ import { OAuth2Client } from 'google-auth-library';
 import { GaxiosResponse } from 'gaxios';
 import { BANK_MAIL } from './consts';
 import { getDataFromHtml } from './getDataFromHtml';
+import { addEntriesToNotionDatabase } from './addEntriesToNotionDatabase';
+require('dotenv').config();
 
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'];
@@ -124,6 +126,7 @@ const start = async (auth: string | OAuth2Client) =>  {
   // console.log(filename); //Powiadomienie e-mail z 2022-06-02.htm
   const filename = FILENAME;
   fs.readFile(`output/${filename}`, (err,data) => {
-  getDataFromHtml(data.toString())
+  const parsedEntries = getDataFromHtml(data.toString(),filename)
+  addEntriesToNotionDatabase(parsedEntries);
   })
 }
