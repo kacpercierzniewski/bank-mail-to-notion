@@ -112,19 +112,13 @@ const saveBankFile = async (auth: string | OAuth2Client) => {
   const {attachmentId, filename} = getHtmAttachmentDetails(lastMessageDetails)
   const attachment = await getAttachment(gmailService, lastMessageDetails.data.id, attachmentId);
 
-  fs.writeFile(`output/${filename}`, attachment.data.data, {encoding: 'base64url'}, (err) => {
-    console.log(`file ${filename} created!`)
-    }
-  );
+  fs.writeFileSync(`output/${filename}`, attachment.data.data, {encoding: 'base64url'})
 
   return {filename};
 }
 
-const FILENAME = 'Powiadomienie e-mail z 2022-06-02.htm'
 const start = async (auth: string | OAuth2Client) =>  {
-  // const {filename} = await saveBankFile(auth);
-  // console.log(filename); //Powiadomienie e-mail z 2022-06-02.htm
-  const filename = FILENAME;
+  const {filename} = await saveBankFile(auth);
   fs.readFile(`output/${filename}`, (err,data) => {
   const parsedEntries = getDataFromHtml(data.toString(),filename)
   addEntriesToNotionDatabase(parsedEntries);
