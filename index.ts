@@ -20,12 +20,7 @@ fs.readFile('credentials.json', (err, content) => {
   authorize(JSON.parse(content.toString()), start);
 });
 
-/**
- * Create an OAuth2 client with the given credentials, and then execute the
- * given callback function.
- * @param {Object} credentials The authorization client credentials.
- * @param {function} callback The callback to call with the authorized client.
- */
+
 function authorize(credentials: Record<string,{client_secret: string, client_id: string, redirect_uris: string}>, callback: (auth: OAuth2Client) => any) {
   const {client_secret, client_id, redirect_uris} = credentials.installed;
   const oAuth2Client = new google.auth.OAuth2(
@@ -41,12 +36,6 @@ function authorize(credentials: Record<string,{client_secret: string, client_id:
   });
 }
 
-/**
- * Get and store new token after prompting for user authorization, and then
- * execute the given callback with the authorized OAuth2 client.
- * @param {google.auth.OAuth2} oAuth2Client The OAuth2 client to get token for.
- * @param {getEventsCallback} callback The callback for the authorized client.
- */
 function getNewToken(oAuth2Client: OAuth2Client, callback: (auth: OAuth2Client | string) => void) {
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: 'offline',
@@ -109,18 +98,12 @@ const getAttachment = async (gmailService: gmail_v1.Gmail, messageId: string, id
     userId:'me',
   })
 }
-/**
- * Lists the labels in the user's account.
- *
- * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
- */
+
 const start = async (auth: string | OAuth2Client) =>  {
     //@ts-ignore
   const gmailService = google.gmail({ version: "v1",auth: auth});
-  // const allMesages = await getAllMessages(gmailService);
   const bankMessages = await getLastMessagesFromGivenSender(gmailService, BANK_MAIL)
   const latestMessages = bankMessages.data.messages;
-  console.log(latestMessages.length);
   const lastMessage = getLastMessage(latestMessages);
   const lastMessageDetails = await getMessageDetails(gmailService, lastMessage); 
   const {attachmentId, filename} = getHtmAttachmentDetails(lastMessageDetails)
@@ -132,36 +115,4 @@ const start = async (auth: string | OAuth2Client) =>  {
   );
   
 
-
-  // const latestLabels = await getLatestLabels(gmailService);
-  // latestLabels.data.labels.forEach(el => console.log(el));
-  // allMesages.data.labe.forEach(el => console.log(el));
-  
-// gmailService.users.messages.attachments.get({messageId: '1811f280083de3b5', id:'ANGjdJ-gDfPw7jP6QUzzByKVtmyIf5hOVEs6bBOkoF2_2Pci7tsUqog4Qo1LiD0gSQhzDJTQX-aIPg-TjkEoxvHDV6-REzTov3oc5ViN5_qn-qjG0ZjFyQnkGxez2SZJu0tdNz41M6poLoKxMG_PTIKUxpLEde4G5N8EM47_ZlVNUKSBA4L6s0FPTROcMyiQL6wFX0nBlEYCPrc6JP7vmA4ygDxB45ibBZU897QioEbaWO7Aiu_l2p1QlAEAodbNqEaiScM0DnS15S-dmncrW8S2qCBFOFo2r5IqT5DlqsVC9uyPaHC_COx1fuxtTnMWkY2emGysJ_tQoe7Ufi0oNFIjT_HreJXo6ApB2SnNWTYeyaIDp4LpT9n-T-fKcKKg4YcjQyrjnT5J4Hx3dHIV',
-// userId: 'me'}).then(attachment => {
-//     // console.log(attachment);
-//     fs.writeFile('output/test.txt',attachment.data.data,{encoding: 'base64url'}, (err) => {
-//         console.log('file created')
-//     })
-// })
-//   gmailService.users.messages.get({id:'1811f280083de3b5', userId: 'me'}).then(message => {
-//     //   console.log(message.data.payload.body)
-//     //   message.data.payload.body
-//     //   message.data.payload.parts.forEach(part => console.log(part))
-//   })
-//   gmailService.users.messages.list({
-//     userId: 'me',
-//   }, (err, res) => {
-//     if (err) return console.log('The API returned an error: ' + err);
-//     const messages = res.data.messages;
-//     if (messages.length) {
-//     //   console.log('Messages:');
-//       messages.forEach((message) => {
-//         //   console.log(message);
-//         // console.log(`- ${message.id}`);
-//       });
-//     } else {
-//       console.log('No messages found.');
-//     }
-//   });
 }
